@@ -13,16 +13,20 @@
 |---|---|---|
 | 核心功能代码 | ✅ 已脱敏、语法通过 | 迁移后未实机运行 |
 | 配置分离 | ✅ `config.py` 统一收口 | — |
-| 依赖声明 | ⚠️ 版本真实但未实测 | 需干净环境验证 |
-| 文档 | ⚠️ README + AUDIT 齐全 | 缺截图、缺运行示例 |
-| 许可证 | ✅ MIT | 署名待确认 |
+| 依赖声明 | ⚠️ 版本取自真实环境但未实测 | 建议干净环境复验 |
+| 文档 | ✅ README（含启动教程）+ AUDIT + 本清单 | 缺截图、缺问答样例 |
+| 许可证 | ✅ MIT，署名已确认 | — |
+| 换行符约定 | ✅ `.gitattributes` | — |
 | `.gitignore` | ✅ 已修正全局 `*.png` 误伤 | — |
+| Git 仓库 | ✅ 已 init 并完成首提交 `a387d4a` | 待关联远端 |
 | 测试 | ❌ 零测试 | 需至少补 smoke test |
 | CI | ❌ 无 | 可选 |
-| Git 仓库 | ❌ 未 `git init` | 待初始化 |
-| 截图素材 | ⚠️ 有，但需筛选与裁剪 | 见 P1-1 |
+| 截图素材 | ⚠️ 可用 3 张，1 张禁用 | 见 P1-1 |
 
-**结论：开源发布可行，但需先完成 P0 全部 4 项。在线部署不建议（见文末）。**
+**结论：P0 四项已全部完成，仓库具备发布条件。**
+
+发布前唯一剩余的技术不确定性是「迁移后的代码尚未实机运行」
+（作者在原始版本上验证通过，但迁移改动未经运行复验）。
 
 ---
 
@@ -36,51 +40,53 @@
 - ☑ 新 Key 只写入本机 `.env`（该文件已被 `.gitignore` 屏蔽）
 - ☑ 确认 `.env` 不在 `git status` 输出中
 
-### ☐ P0-2　在干净环境跑通全链路
+### ◐ P0-2　实机复验迁移后的代码
 
-仓库内的 `requirements.txt` 版本号取自作者本机环境，**从未在干净环境中验证过**。
-未经验证的依赖清单，对使用者等于没有。
+作者已在**原始版本**上完整跑通过全链路，功能本身无疑问。
+但迁移过程改动了配置加载、路径定位与文件组织，**这些改动尚未经运行复验**。
+四步都做过的事再走一遍即可，重点看第 ① 步：
 
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-逐段验证：
-
-- ☐ `python -c "import config"` 无报错
-- ☐ 启动 Neo4j，`.env` 填好凭据
-- ☐ `python scripts/build_vector_db.py`（可先只放 2-3 篇 PDF 试跑）
+- ☐ `python -c "import config"` 无报错（验证配置层改动）
+- ☐ `python scripts/build_vector_db.py`（验证路径重定向到 `data/` 后仍正常）
 - ☐ `python scripts/build_knowledge_graph.py`
 - ☐ `python scripts/unify_entities.py`
 - ☐ `streamlit run app.py`，能提问并返回带溯源的回答
 
-跑通后固化完整依赖树：
+建议先只放 2–3 篇 PDF 跑通，再放开全量，避免白白消耗 API 额度。
+
+跑通后固化完整依赖树，对使用者更友好：
 
 ```bash
 pip freeze > requirements.lock
 ```
 
-> ⚠️ 风险最高的一步。LangChain 1.x 生态版本耦合紧密，
-> 若 pip 解析出不同组合，可能出现导入失败。
+> 若第 ① 步报错，多半是 `pip` 解析出了与 `requirements.txt` 不同的
+> LangChain 组合——该生态版本耦合紧密，需整体升级而非单独升级某个包。
 
 ### ☑ P0-3　确认 LICENSE 署名
 
 **已完成（2026-09-19，作者确认署名 `Sharker` 无需调整）。**
 
-### ☐ P0-4　初始化 Git 仓库并检查首提交内容
+### ☑ P0-4　初始化 Git 仓库并检查首提交内容
+
+**已完成（2026-09-19）。** 分支 `main`，首提交 `a387d4a`，18 个文件 / 2170 行。
+
+执行与核查记录：
 
 ```bash
-git init
+git init -b main
 git add -A
-git status          # ← 关键：逐项确认没有误加数据文件或 .env
-git commit -m "Initial commit: CV-Mind GraphRAG knowledge engine"
+git status              # 逐项确认为 17 个源文件，无误加
+git commit              # → a387d4a
 ```
 
-- ☐ 确认 `data/papers/` 与 `data/chroma_db/` 下除 `.gitkeep` 外无内容
-- ☐ 确认 `.env` 未出现在待提交列表
-- ☐ 确认仓库体积在 200KB 量级（当前 101KB）
+- ☑ `data/papers/` 与 `data/chroma_db/` 下除 `.gitkeep` 外无内容
+- ☑ `.env` 未出现在待提交列表（已跟踪文件共 18 个，逐项核对通过）
+- ☑ 提交内容安全扫描 0 命中（密钥 / 口令 / 绝对路径 / 个人信息）
+- ☑ 仓库体积 120KB + `.git` 153KB
+
+另行补充 `.gitattributes`，统一换行符为 LF——Windows 下若无此文件，
+Git 会把整个仓库转成 CRLF，与 macOS / Linux 协作者之间产生整文件级伪 diff。
 
 ---
 
@@ -155,9 +161,10 @@ Neo4j 导出数据显示，实际图谱中出现了 Schema 未声明的
 
 ---
 
-## 关于「部署上线」
+## 附：关于挂在线 Demo
 
-**不建议，且在当前架构下基本不可行。** 四条硬性阻碍：
+本项目目标是「开源发布」，不涉及在线部署。此处仅作备查——
+若日后有人问起"为什么不做个在线体验链接"，答案如下（四条硬性阻碍）：
 
 | 需求 | 障碍 |
 |---|---|
@@ -166,7 +173,7 @@ Neo4j 导出数据显示，实际图谱中出现了 Schema 未声明的
 | 嵌入 + 重排模型常驻 | 内存约 2-3GB，Streamlit 免费档仅 1GB |
 | DeepSeek API | 需付费 Key，公开 Demo 会被他人消耗额度 |
 
-**定位建议**：这是「可复现的开源研究代码」，不是「可在线体验的产品」。
+**定位**：这是「可复现的开源研究代码」，不是「可在线体验的产品」。
 硬要做在线 Demo，只能退化成预录回答加静态图谱展示，反而失去项目本身的意义。
 
 > ⚠️ 若未来确实要挂公开 Demo，务必为 API Key 设置用量上限，
