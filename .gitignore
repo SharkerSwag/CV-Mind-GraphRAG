@@ -1,0 +1,46 @@
+# ---- 凭据：绝不提交 ----
+.env
+*.env
+!.env.example
+*.key
+*.pem
+
+# ---- 数据资产：体量大 + 含第三方版权，不入库 ----
+# 论文 PDF 请自行从 arXiv 等渠道获取后放入 data/papers/
+data/papers/*
+!data/papers/.gitkeep
+data/chroma_db/*
+!data/chroma_db/.gitkeep
+
+# ---- 运行产物 ----
+# 评测脚本默认输出到 outputs/，整个目录忽略
+outputs/
+# 兜底：若脚本被改到仓库根目录生成报告，同样忽略
+/evaluation_report.xlsx
+/evaluation_dashboard.png
+
+# 注意：此处不要写全局的 *.png / *.xlsx —
+# 否则 docs/ 下的 README 配图会被一并忽略。
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ---- 虚拟环境 ----
+.venv/
+venv/
+env/
+
+# ---- 模型缓存 ----
+.huggingface/
+.cache/
+
+# ---- 编辑器与系统 ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

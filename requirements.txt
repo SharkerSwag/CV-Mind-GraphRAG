@@ -1,0 +1,42 @@
+# CV-Mind GraphRAG — 依赖清单
+#
+# 版本号取自作者本地实际跑通的 conda 环境（Python 3.10），
+# 未做向上兼容尝试。若要升级，请整体升级 LangChain 系列，勿单独升级。
+#
+# 安装：
+#   python -m venv .venv
+#   .venv\Scripts\activate        # Windows
+#   pip install -r requirements.txt
+
+# --- Web 界面 ---
+streamlit==1.52.2
+streamlit-agraph==0.0.45
+
+# --- LLM 与编排（LangChain 1.x 系列，版本需整体一致）---
+langchain==1.2.1
+langchain-core==1.2.6
+langchain-community==0.4.1
+langchain-openai==1.1.6
+langchain-text-splitters==1.1.0
+openai==2.14.0
+
+# --- 向量检索 ---
+chromadb==1.4.0
+sentence-transformers==5.2.0
+transformers==4.57.3
+torch==2.9.1
+
+# --- 知识图谱 ---
+py2neo==2021.2.4
+
+# --- 文档解析 ---
+pypdf==6.5.0
+
+# --- 配置 ---
+python-dotenv==1.2.1
+
+# --- 评测与可视化 ---
+pandas==2.3.3
+numpy==2.2.6
+openpyxl==3.1.5
+matplotlib==3.10.8

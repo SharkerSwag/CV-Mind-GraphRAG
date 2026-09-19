@@ -1,0 +1,27 @@
+# 统一换行符为 LF。
+# 不加这一条时，Windows 上的 Git 会把整个仓库转成 CRLF，
+# 与 macOS / Linux 协作者之间会产生整文件级别的伪 diff。
+* text=auto eol=lf
+
+# 源码与文档明确按文本处理
+*.py    text
+*.md    text
+*.txt   text
+*.toml  text
+*.yml   text
+*.yaml  text
+
+# 二进制文件不做任何换行转换
+*.pdf     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.svg     text
+*.xlsx    binary
+*.bin     binary
+*.sqlite3 binary
+
+# 让 GitHub 语言统计正确识别
+*.py    linguist-language=Python
+*.md    linguist-documentation
+docs/*  linguist-documentation
